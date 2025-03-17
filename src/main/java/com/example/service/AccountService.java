@@ -10,7 +10,7 @@ public class AccountService {
     private AccountRepository accountRepository;
 
     // register account
-    /* 1:new User registrations.
+    /* 1: new User registrations.
     The registration will be successful if and only if 
     - the username is not blank, 
     - the password is at least 4 characters long, and 
@@ -37,4 +37,19 @@ public class AccountService {
         createdAccount.setPassword(password);
         return accountRepository.save(createdAccount);
     }
+
+    /*
+     * User Login
+     * The login will be successful if and only if 
+     * the username and password provided in the request body JSON match a real account existing on the database. 
+     * 
+     */
+    public Account Login(Account account){
+        Account trueAccount = accountRepository.findByUsername(account.getUsername());
+        if(trueAccount != null && trueAccount.getPassword().equals(account.getPassword())){
+            return trueAccount;
+        }
+        throw new IllegalArgumentException("The passowrd doesn't match");
+    } 
+
 }

@@ -48,6 +48,22 @@ public class SocialMediaController {
         }
     }
 
+    /*
+     * ## 2: process User logins.
+     * - The response status should be 200 OK, which is the default.
+     * - If successful, the response body should contain a JSON of the account in the response body, 
+     *      including its accountId. 
+     * - If the login is not successful, the response status should be 401. (Unauthorized)
+     */
+    @PostMapping("/login")
+    public ResponseEntity<?> Login(@RequestBody Account account){
+        try{
+            Account loginAccount = accountService.Login(account);
+            return ResponseEntity.status(200).body(loginAccount);
+        }catch(IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
 
 
 }
