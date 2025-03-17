@@ -1,11 +1,13 @@
 package com.example.service;
 
+import org.springframework.stereotype.Service;
+
 import com.example.entity.Account;
 import com.example.repository.AccountRepository;
-
+@Service
 public class AccountService {
 
-    private final AccountRepository accountRepository;
+    private AccountRepository accountRepository;
 
     // register account
     /* 1:new User registrations.
@@ -33,6 +35,6 @@ public class AccountService {
         Account createdAccount = new Account();
         createdAccount.setUsername(username);
         createdAccount.setPassword(password);
-        return AccountRepository.save(createdAccount);
+        return accountRepository.save(createdAccount);
     }
 }

@@ -36,10 +36,11 @@ public class SocialMediaController {
         - If the registration is not successful for some other reason, the response status should be 400. (Client error)
      */
     @PostMapping("/register")
-    public ResponseEntity<Account> register(@RequestBody Account account){
+    public ResponseEntity<?> register(@RequestBody Account account){
         try{
-            Account accountCreated = AccountService.register(account);
-            return new ResponseEntity.ok(accountCreated);
+            Account accountCreated = accountService.register(account);
+            return ResponseEntity.status(HttpStatus.CREATED).body(accountCreated);
+
         }catch(IllegalArgumentException e){
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }catch(Exception e){
