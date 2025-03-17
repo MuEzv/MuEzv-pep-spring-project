@@ -8,6 +8,12 @@ public class AccountService {
     private final AccountRepository accountRepository;
 
     // register account
+    /* 1:new User registrations.
+    The registration will be successful if and only if 
+    - the username is not blank, 
+    - the password is at least 4 characters long, and 
+    - an Account with that username does not already exist. 
+    */
     public Account register(Account account){
         String username = account.getUsername();
         String password = account.getPassword();

@@ -4,10 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import com.example.entity.Account;
 import com.example.service.AccountService;
 
 /**
@@ -28,6 +29,12 @@ public class SocialMediaController {
         this.accountService = accountService;
     }
 
+    /*
+     * The response body should contain a JSON of the Account, including its accountId. 
+     * The response status should be 200 OK, which is the default. The new account should be persisted to the database. 
+        - If the registration is not successful due to a duplicate username, the response status should be 409. (Conflict)
+        - If the registration is not successful for some other reason, the response status should be 400. (Client error)
+     */
     @PostMapping("/register")
     public ResponseEntity<Account> register(@RequestBody Account account){
         try{
