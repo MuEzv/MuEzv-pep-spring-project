@@ -30,10 +30,16 @@ public class SocialMediaController {
 
     @PostMapping("/register")
     public ResponseEntity<Account> register(@RequestBody Account account){
-        Account accountCreated = AccountService.register(account);
-        return new ResponseEntity<>(accountCreated, HttpStatus.CREATED); 
+        try{
+            Account accountCreated = AccountService.register(account);
+            return new ResponseEntity.ok(accountCreated);
+        }catch(IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request");
+        }
     }
 
-    
+
 
 }
