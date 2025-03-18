@@ -1,15 +1,20 @@
 package com.example.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entity.Account;
+import com.example.entity.Message;
 import com.example.service.AccountService;
+import com.example.service.MessageService;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller using Spring. The endpoints you will need can be
@@ -23,10 +28,12 @@ public class SocialMediaController {
 
     
     private final AccountService accountService;
+    private final MessageService messageService;
 
     @Autowired
-    public SocialMediaController(AccountService accountService){
+    public SocialMediaController(AccountService accountService, MessageService messageService){
         this.accountService = accountService;
+        this.messageService = messageService;
     }
 
     /*
@@ -62,17 +69,48 @@ public class SocialMediaController {
             return ResponseEntity.status(200).body(loginAccount);
         }catch(IllegalArgumentException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Login - Invalid Request")
         }
     }
 
+    /*
+     * 3. creation of new messages
+     * - The response status should be 200
+     * - If the creation of the message is not successful, 
+     * - the response status should be 400. (Client error)
+     */
     @PostMapping("/messages")
     public ResponseEntity<?> createMessage(@RequestBody Message message){
         try{
-
-        }catch{
-            
+            Message createdMsg = messageService.createMessage(message);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdMsg);
+        }catch(IllegalArgumentException e){
+            return ResponseEntity.status(400).body(e.getMessage());
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Login - Invalid Request")
         }
     }
 
 
+    /*
+     * 4. retrieve all messages
+     */
+    @GetMapping("/messages")
+    public ResponseEntity<?> retrieveMessages(){
+        try{
+            List<Message> messageList = messageService.getAllMessages();
+            return ResponseEntity.status(200).body(messageList);
+        }catch(Exception e){
+            return ResponseEntity.status(200).body(null);
+        }
+    }
+
+    /*
+     * 5. retrieve a message by its ID
+     */
+    @GetMapping("/messages/{messageId}")
+    public ResponseEntity<?> getMessageById(Long messageId){
+        return messageService.getMessageById(messageId);
+    }
 }

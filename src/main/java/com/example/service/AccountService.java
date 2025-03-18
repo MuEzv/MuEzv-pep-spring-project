@@ -21,7 +21,7 @@ public class AccountService {
         String password = account.getPassword();
         
         if(username == null || username.isBlank()){
-            throw new IllegalArgumentException("Username cannoy be blank");
+            throw new IllegalArgumentException("Username cannot be blank");
         }
         
         if(password == null || password.length() < 4){
