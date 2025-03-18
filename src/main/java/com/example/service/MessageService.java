@@ -7,6 +7,8 @@ import com.example.repository.AccountRepository;
 import com.example.repository.MessageRepository;
 import java.util.*;
 
+import javax.persistence.EntityNotFoundException;
+
 
 @Service
 public class MessageService {
@@ -21,7 +23,7 @@ public class MessageService {
     public Message createMessage(Message message){
         String text = message.getMessageText();
         if(text == null || text.isBlank() || text.length() > 255){
-            throw new IllegalArgumentException("Message test is invalid");
+            throw new IllegalArgumentException("Message text is invalid");
         }
         int postedBy = message.getPostedBy();
         if(accountRepository.findById(postedBy) == null){
@@ -47,4 +49,47 @@ public class MessageService {
       public Optional<Message> getMessageById(Long id){
         return messageRepository.findById(id);
       }
+
+      //6. DELETE Message by ID
+
+      public int deleteMessageById(Long id){
+        Optional<Message> optionalmsg = messageRepository.findById(id);
+        if(optionalmsg.isPresent()){
+            //Message msg = optionalmsg.get();
+            messageRepository.deleteById(id);
+            return 1;
+        }else{
+            throw new EntityNotFoundException("Message with ID" + id + "not found");
+        }
+    
+      }
+
+      /*
+       * 7. Update MessageText by Id
+       *    7.1 the message id already exists
+       *    7.2 new messageText is not blank and is not over 255 characters
+       */
+
+    public int updateMessageById(String newMessageText, Long id){
+        Optional<Message> optionalmsg = messageRepository.findById(id);
+
+        // check message id exists
+        if(!optionalmsg.isPresent()){
+            throw new EntityNotFoundException("Can't find the message");
+        }
+        //check message text
+        if(newMessageText == null || newMessageText.isBlank() || newMessageText.length() > 255){
+            throw new IllegalArgumentException("Message text is invalid");
+        }  
+        Message msg = optionalmsg.get();
+        msg.setMessageText(newMessageText);
+        messageRepository.save(msg);
+        return 1;          
+    }
+
+    // 8. Get Messages by Account Id
+    public List<Message> getMessageByAccountId(int accountId){
+        List<Message> messageList = messageRepository.findByPostedBy(accountId);
+        return messageList;
+    }
 }

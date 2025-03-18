@@ -1,11 +1,16 @@
 package com.example.controller;
 
-import java.util.List;
+import java.util.*;
+
+import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -70,7 +75,7 @@ public class SocialMediaController {
         }catch(IllegalArgumentException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Login - Invalid Request")
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Login - Invalid Request");
         }
     }
 
@@ -88,7 +93,7 @@ public class SocialMediaController {
         }catch(IllegalArgumentException e){
             return ResponseEntity.status(400).body(e.getMessage());
         }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Login - Invalid Request")
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Login - Invalid Request");
         }
     }
 
@@ -110,7 +115,49 @@ public class SocialMediaController {
      * 5. retrieve a message by its ID
      */
     @GetMapping("/messages/{messageId}")
-    public ResponseEntity<?> getMessageById(Long messageId){
-        return messageService.getMessageById(messageId);
+    public ResponseEntity<?> getMessageById(@PathVariable Long messageId){
+        return ResponseEntity.status(200).body(messageService.getMessageById(messageId));
     }
+    
+    /*
+     * 6. Delete Message by Id
+     */
+
+     @DeleteMapping("/messages/{messageId}")
+     public ResponseEntity<?> deleteMessageById(@PathVariable Long messageId){
+        try{
+            return ResponseEntity.status(200).body(messageService.deleteMessageById(messageId));
+        }catch(EntityNotFoundException e){
+            return ResponseEntity.status(200).body(null);
+        }
+    }
+
+    /*
+     * 7. Update Message Text by Id
+     */
+
+    @PatchMapping("/messages/{messageId}")
+    public ResponseEntity<?> updateMessageById(@PathVariable Long messageId, @RequestBody Map<String, String> requestBody){
+        String newMessageText = requestBody.get("messageText");
+        try{
+            return ResponseEntity.status(200)
+            .body(messageService.updateMessageById(newMessageText, messageId));
+        }catch(IllegalArgumentException e){
+            return ResponseEntity.status(400).body(e.getMessage());
+        }catch(EntityNotFoundException e){
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
+    /*
+     * 8. Retrieve all messages by UserId
+     */
+    @GetMapping("/accounts/{accountId}/messages")
+    public ResponseEntity<?> getAllMessageByAccountId(@PathVariable int accountId){
+        List<Message> messageList = messageService.getMessageByAccountId(accountId);
+        return ResponseEntity.status(200).body(messageList);
+    }
+
+    
 }
+        
