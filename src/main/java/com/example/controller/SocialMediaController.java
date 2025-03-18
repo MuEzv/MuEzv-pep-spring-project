@@ -84,7 +84,7 @@ public class SocialMediaController {
     public ResponseEntity<?> createMessage(@RequestBody Message message){
         try{
             Message createdMsg = messageService.createMessage(message);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdMsg);
+            return ResponseEntity.status(200).body(createdMsg);
         }catch(IllegalArgumentException e){
             return ResponseEntity.status(400).body(e.getMessage());
         }
