@@ -65,5 +65,14 @@ public class SocialMediaController {
         }
     }
 
+    @PostMapping("/messages")
+    public ResponseEntity<?> createMessage(@RequestBody Message message){
+        try{
+
+        }catch{
+            
+        }
+    }
+
 
 }
