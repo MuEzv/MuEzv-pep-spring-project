@@ -28,7 +28,6 @@ import com.example.service.MessageService;
  * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
  */
 @RestController
-@RequestMapping("/api/user")
 public class SocialMediaController {
 
     
@@ -51,12 +50,10 @@ public class SocialMediaController {
     public ResponseEntity<?> register(@RequestBody Account account){
         try{
             Account accountCreated = accountService.register(account);
-            return ResponseEntity.status(HttpStatus.CREATED).body(accountCreated);
+            return ResponseEntity.status(HttpStatus.OK).body(accountCreated);
 
         }catch(IllegalArgumentException e){
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request");
         }
     }
 
@@ -68,14 +65,12 @@ public class SocialMediaController {
      * - If the login is not successful, the response status should be 401. (Unauthorized)
      */
     @PostMapping("/login")
-    public ResponseEntity<?> Login(@RequestBody Account account){
+    public ResponseEntity<?> login(@RequestBody Account account){
         try{
             Account loginAccount = accountService.Login(account);
             return ResponseEntity.status(200).body(loginAccount);
         }catch(IllegalArgumentException e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Login - Invalid Request");
+            return ResponseEntity.status(401).body(e.getMessage());
         }
     }
 
@@ -92,8 +87,6 @@ public class SocialMediaController {
             return ResponseEntity.status(HttpStatus.CREATED).body(createdMsg);
         }catch(IllegalArgumentException e){
             return ResponseEntity.status(400).body(e.getMessage());
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Login - Invalid Request");
         }
     }
 
@@ -158,6 +151,6 @@ public class SocialMediaController {
         return ResponseEntity.status(200).body(messageList);
     }
 
-    
+
 }
         

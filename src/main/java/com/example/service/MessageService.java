@@ -13,8 +13,13 @@ import javax.persistence.EntityNotFoundException;
 @Service
 public class MessageService {
  
-    private AccountRepository accountRepository;
-    private MessageRepository messageRepository;
+    private final AccountRepository accountRepository;
+    private final MessageRepository messageRepository;
+
+    public MessageService(AccountRepository accountRepository, MessageRepository messageRepository){
+        this.accountRepository = accountRepository;
+        this.messageRepository = messageRepository;
+    }
     /*
      * 3. CREATE MESSAGE
      *  3.1 the messageText is not blank, is not over 255 characters
@@ -26,7 +31,7 @@ public class MessageService {
             throw new IllegalArgumentException("Message text is invalid");
         }
         int postedBy = message.getPostedBy();
-        if(accountRepository.findById(postedBy) == null){
+        if(!accountRepository.findById(postedBy).isPresent()){
             throw new IllegalArgumentException("The postedBy doesn't exist");
         }
         Message newmsg = new Message(message.getPostedBy(), message.getMessageText(), message.getTimePostedEpoch());
@@ -46,8 +51,10 @@ public class MessageService {
       * 5. Get Message by id
       */
 
-      public Optional<Message> getMessageById(Long id){
-        return messageRepository.findById(id);
+      public Message getMessageById(Long id){
+        Optional<Message> msg = messageRepository.findById(id);
+        if(msg.isPresent()) return msg.get();
+        return null;
       }
 
       //6. DELETE Message by ID
@@ -82,6 +89,9 @@ public class MessageService {
             throw new IllegalArgumentException("Message text is invalid");
         }  
         Message msg = optionalmsg.get();
+        if(!accountRepository.existsById(msg.getPostedBy())){
+            throw new IllegalArgumentException("User not authorized");
+        }
         msg.setMessageText(newMessageText);
         messageRepository.save(msg);
         return 1;          

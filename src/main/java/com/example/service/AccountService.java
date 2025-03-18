@@ -7,7 +7,10 @@ import com.example.repository.AccountRepository;
 @Service
 public class AccountService {
 
-    private AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
+    public AccountService(AccountRepository accountRepository){
+        this.accountRepository = accountRepository;
+    }
 
     // register account
     /* 1: new User registrations.
