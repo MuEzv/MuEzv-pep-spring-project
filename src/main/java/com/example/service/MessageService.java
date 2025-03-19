@@ -52,22 +52,20 @@ public class MessageService {
       */
 
       public Message getMessageById(Long id){
-        Optional<Message> msg = messageRepository.findById(id);
-        if(msg.isPresent()) return msg.get();
-        return null;
+        return messageRepository.findById(id).orElse(null);
+        // Optional<Message> msg = messageRepository.findById(id);
+        // if(msg.isPresent()) return msg.get();
+        // return null;
       }
 
       //6. DELETE Message by ID
 
       public int deleteMessageById(Long id){
-        Optional<Message> optionalmsg = messageRepository.findById(id);
-        if(optionalmsg.isPresent()){
-            //Message msg = optionalmsg.get();
+        if(messageRepository.existsById(id)){
             messageRepository.deleteById(id);
             return 1;
-        }else{
-            return 0;
         }
+        return 0;
     
       }
 
@@ -78,31 +76,20 @@ public class MessageService {
        */
 
     public int updateMessageById(String newMessageText, Long id){
-        Optional<Message> optionalmsg = messageRepository.findById(id);
-
-        // check message id exists
-        if(!optionalmsg.isPresent()){
-            return 0;
-            //throw new EntityNotFoundException("Can't find the message");
-        }
         //check message text
         if(newMessageText == null || newMessageText.isBlank() || newMessageText.length() > 255){
             return 0;
-            //throw new IllegalArgumentException("Message text is invalid");
         }  
-        Message msg = optionalmsg.get();
-        if(!accountRepository.existsById(msg.getPostedBy())){
-            return 0;
-            //throw new IllegalArgumentException("User not authorized");
-        }
-        msg.setMessageText(newMessageText);
-        messageRepository.save(msg);
-        return 1;          
+        return messageRepository.findById(id)
+            .map(message -> {
+                message.setMessageText(newMessageText);
+                messageRepository.save(message);
+                return 1;
+            }).orElse(0);         
     }
 
     // 8. Get Messages by Account Id
     public List<Message> getMessageByAccountId(int accountId){
-        List<Message> messageList = messageRepository.findByPostedBy(accountId);
-        return messageList;
+        return messageRepository.findByPostedBy(accountId);
     }
 }
