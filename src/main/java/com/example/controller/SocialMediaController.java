@@ -96,12 +96,9 @@ public class SocialMediaController {
      */
     @GetMapping("/messages")
     public ResponseEntity<?> retrieveMessages(){
-        try{
-            List<Message> messageList = messageService.getAllMessages();
-            return ResponseEntity.status(200).body(messageList);
-        }catch(Exception e){
-            return ResponseEntity.status(200).body(null);
-        }
+        List<Message> messageList = messageService.getAllMessages();
+        return ResponseEntity.status(200).body(messageList);
+        
     }
 
     /*
@@ -109,7 +106,11 @@ public class SocialMediaController {
      */
     @GetMapping("/messages/{messageId}")
     public ResponseEntity<?> getMessageById(@PathVariable Long messageId){
-        return ResponseEntity.status(200).body(messageService.getMessageById(messageId));
+        Message msg = messageService.getMessageById(messageId);
+
+        return msg != null ? 
+            ResponseEntity.ok(msg) :
+            ResponseEntity.ok().build();
     }
     
     /*
@@ -118,11 +119,9 @@ public class SocialMediaController {
 
      @DeleteMapping("/messages/{messageId}")
      public ResponseEntity<?> deleteMessageById(@PathVariable Long messageId){
-        try{
-            return ResponseEntity.status(200).body(messageService.deleteMessageById(messageId));
-        }catch(EntityNotFoundException e){
-            return ResponseEntity.status(200).body(null);
-        }
+            int deletedCnt = messageService.deleteMessageById(messageId);
+            return ResponseEntity.ok(deletedCnt == 1 ? deletedCnt : null);
+        
     }
 
     /*
@@ -130,16 +129,17 @@ public class SocialMediaController {
      */
 
     @PatchMapping("/messages/{messageId}")
-    public ResponseEntity<?> updateMessageById(@PathVariable Long messageId, @RequestBody Map<String, String> requestBody){
-        String newMessageText = requestBody.get("messageText");
-        try{
-            return ResponseEntity.status(200)
-            .body(messageService.updateMessageById(newMessageText, messageId));
-        }catch(IllegalArgumentException e){
-            return ResponseEntity.status(400).body(e.getMessage());
-        }catch(EntityNotFoundException e){
-            return ResponseEntity.status(400).body(e.getMessage());
-        }
+    public ResponseEntity<?> updateMessageById(@PathVariable Long messageId, 
+                                                @RequestBody Map<String, String> requestBody){
+       // try{
+            String newMessageText = requestBody.get("messageText");
+            int updatedcnt = messageService.updateMessageById(newMessageText, messageId);
+            return ResponseEntity.ok(updatedcnt == 1 ? updatedcnt : null);
+        // }catch(IllegalArgumentException e){
+        //     return ResponseEntity.status(400).body(e.getMessage());
+        // }catch(EntityNotFoundException e){
+        //     return ResponseEntity.status(400).body(e.getMessage());
+        // }
     }
 
     /*

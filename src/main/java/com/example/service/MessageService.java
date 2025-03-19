@@ -66,7 +66,7 @@ public class MessageService {
             messageRepository.deleteById(id);
             return 1;
         }else{
-            throw new EntityNotFoundException("Message with ID" + id + "not found");
+            return 0;
         }
     
       }
@@ -82,15 +82,18 @@ public class MessageService {
 
         // check message id exists
         if(!optionalmsg.isPresent()){
-            throw new EntityNotFoundException("Can't find the message");
+            return 0;
+            //throw new EntityNotFoundException("Can't find the message");
         }
         //check message text
         if(newMessageText == null || newMessageText.isBlank() || newMessageText.length() > 255){
-            throw new IllegalArgumentException("Message text is invalid");
+            return 0;
+            //throw new IllegalArgumentException("Message text is invalid");
         }  
         Message msg = optionalmsg.get();
         if(!accountRepository.existsById(msg.getPostedBy())){
-            throw new IllegalArgumentException("User not authorized");
+            return 0;
+            //throw new IllegalArgumentException("User not authorized");
         }
         msg.setMessageText(newMessageText);
         messageRepository.save(msg);
