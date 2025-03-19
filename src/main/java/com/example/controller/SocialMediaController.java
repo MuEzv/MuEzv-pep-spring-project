@@ -105,7 +105,7 @@ public class SocialMediaController {
      * 5. retrieve a message by its ID
      */
     @GetMapping("/messages/{messageId}")
-    public ResponseEntity<?> getMessageById(@PathVariable Long messageId){
+    public ResponseEntity<?> getMessageById(@PathVariable int messageId){
         Message msg = messageService.getMessageById(messageId);
 
         return msg != null ? 
@@ -118,7 +118,7 @@ public class SocialMediaController {
      */
 
      @DeleteMapping("/messages/{messageId}")
-     public ResponseEntity<?> deleteMessageById(@PathVariable Long messageId){
+     public ResponseEntity<?> deleteMessageById(@PathVariable int messageId){
             int deletedCnt = messageService.deleteMessageById(messageId);
             return ResponseEntity.ok(deletedCnt == 1 ? deletedCnt : null);
         
@@ -126,15 +126,18 @@ public class SocialMediaController {
 
     /*
      * 7. Update Message Text by Id
+     * - If the update of the message is not successful for any reason, 
+     *  the response status should be 400. (Client error)
      */
 
     @PatchMapping("/messages/{messageId}")
-    public ResponseEntity<?> updateMessageById(@PathVariable Long messageId, 
+    public ResponseEntity<?> updateMessageById(@PathVariable int messageId, 
                                                 @RequestBody Map<String, String> requestBody){
        // try{
             String newMessageText = requestBody.get("messageText");
             int updatedcnt = messageService.updateMessageById(newMessageText, messageId);
-            return ResponseEntity.ok(updatedcnt == 1 ? updatedcnt : null);
+            if(updatedcnt == 1)return ResponseEntity.ok(updatedcnt);
+            return ResponseEntity.status(400).build();
         // }catch(IllegalArgumentException e){
         //     return ResponseEntity.status(400).body(e.getMessage());
         // }catch(EntityNotFoundException e){

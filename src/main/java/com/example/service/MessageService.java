@@ -49,9 +49,8 @@ public class MessageService {
 
      /*
       * 5. Get Message by id
-      */
-
-      public Message getMessageById(Long id){
+      */ 
+      public Message getMessageById(int id){
         return messageRepository.findById(id).orElse(null);
         // Optional<Message> msg = messageRepository.findById(id);
         // if(msg.isPresent()) return msg.get();
@@ -60,7 +59,7 @@ public class MessageService {
 
       //6. DELETE Message by ID
 
-      public int deleteMessageById(Long id){
+      public int deleteMessageById(int id){
         if(messageRepository.existsById(id)){
             messageRepository.deleteById(id);
             return 1;
@@ -75,12 +74,12 @@ public class MessageService {
        *    7.2 new messageText is not blank and is not over 255 characters
        */
 
-    public int updateMessageById(String newMessageText, Long id){
+    public int updateMessageById(String newMessageText, int messageid){
         //check message text
         if(newMessageText == null || newMessageText.isBlank() || newMessageText.length() > 255){
             return 0;
         }  
-        return messageRepository.findById(id)
+        return messageRepository.findById(messageid)
             .map(message -> {
                 message.setMessageText(newMessageText);
                 messageRepository.save(message);
